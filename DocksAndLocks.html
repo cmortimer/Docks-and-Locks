@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<style type="text/css">
+		body { margin: 0; padding: 0; background: #999;}
+		canvas { display: block; margin: 0.5em auto; background: #fff; }
+	</style>
+	<title>Dock and Lock</title>
+</head>
+<body>
+	<canvas width='640' height='480'>
+		Get a real browser!
+	</canvas>
+	
+	
+	<script src="Dock.js"></script>
+	
+	<script>
+	
+	"use strict";
+	var app = app || {};
+	
+	window.onload = function(){
+	
+		app.canvasWIDTH = 1280;
+		app.canvasHEIGHT = 720;
+		
+		app.canvas = document.querySelector('canvas');
+		app.canvas.width = app.canvasWIDTH;
+		app.canvas.height = app.canvasHEIGHT;
+		app.ctx = app.canvas.getContext('2d');
+		
+		app.dock = new app.Dock(100,500,20);
+		
+		console.log(app.dock);
+	
+	}
+	
+	
+	
+	
+	</script>
+	
+</body>
+</html>

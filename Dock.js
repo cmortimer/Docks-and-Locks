@@ -16,24 +16,28 @@ app.Dock = function(){
 
 		this.baseW = 100;
 		this.baseH = 100;
-		this.baseX = cirX - (baseW/2);
-		this.baseY = cirY - (baseH/2);
+		this.baseX = this.cirX - (this.baseW/2);
+		this.baseY = this.cirY - (this.baseH/2);
 		
 		this.platformW = 150;
 		this.platformH = 20;
-		this.platformX = cirX - (platformH/2);
+		this.platformX = this.cirX - (this.platformH/2);
 		this.platformY = platformHeight;
 		
 		this.pistionW = 20;
-		this.pistionX = cirX - (pistionW/2);
-		this.pistionY = platformY - platformH;
-		this.pistionH = pistionY - baseY;
+		this.pistionX = this.cirX - (this.pistionW/2);
+		this.pistionY = this.platformY - this.platformH;
+		this.pistionH = this.pistionY - this.baseY;
 	}
 
 	var p = Dock.prototype;
 	
 	p.draw = function(ctx){
+	
+
 		
 	}
+	
+	return Dock;
 
 }();

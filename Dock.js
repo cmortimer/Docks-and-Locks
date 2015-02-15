@@ -59,7 +59,7 @@ app.Dock = function(){
 		ctx.arc(this.cirX,this.cirY, this.cirR,0, Math.PI*2, false);
 		ctx.closePath();
 		if(this.locked) { 
-			ctx.fillStyle = this.cirlockFillStyle;
+			ctx.fillStyle = this.cirLockFillStyle;
 		} else {
 			ctx.fillStyle = this.cirUnlockFillStyle;
 		}

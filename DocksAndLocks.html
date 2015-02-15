@@ -26,16 +26,61 @@
 		app.canvasWIDTH = 1280;
 		app.canvasHEIGHT = 720;
 		
+		app.docks = [];
+		
 		app.canvas = document.querySelector('canvas');
 		app.canvas.width = app.canvasWIDTH;
 		app.canvas.height = app.canvasHEIGHT;
 		app.ctx = app.canvas.getContext('2d');
 		
-		app.dock = new app.Dock(100,500,100);
+		app.docks.push(new app.Dock(100,500,100));
+		app.docks.push(new app.Dock(300,500,100));
+		app.docks.push(new app.Dock(500,500,100));
 		
-		console.log(app.dock);
+		console.log(app.docks[0]);
 		
+		app.docks.update = function(){
 		
+			var indices = [];
+
+			for(var i = app.docks.length -1 ; i>=0; i--){
+				
+				//check player collision and junk faking for now
+				if(i == 0){
+				
+					// check to see if colliding platform is at is min height or locked
+					if(app.docks[i].platformHeight != app.docks[i].platformMinHeight && !app.docks[i].locked) {
+					
+						//go though loop and add docks ahead in the list till you hit a lock then break
+						for(var j = i +1; j <app.docks.length; j++){
+							if(!app.docks[j].locked){
+								indices.push(j);
+							} else {
+								break;
+							}
+						}
+						
+						//same as above opposite direction
+						for(var j = i -1; j >= 0; j--){
+							if(!app.docks[j].locked){
+								indices.push(j);
+							} else {
+								break;
+							}
+						}
+					
+						//if can move water the system do so. 
+						if(indices.length != 0){
+							app.docks[i].setPlatformHeight(-app.docks[i].fallHeight);
+							for(var k = indices.length -1; k>=0; k--){
+								app.docks[indices[k]].setPlatformHeight(app.docks[i].fallHeight/indices.length);
+							}
+						}
+					}
+				}
+				app.docks[i].draw(app.ctx);
+			}
+		}
 		
 		
 		
@@ -50,11 +95,10 @@
 		this.ctx.fillStyle = "white";
 		
 		this.ctx.fillRect(0,0,app.canvasWIDTH,app.canvasHEIGHT);
-	
 		
-		app.dock.setPlatformHeight(-this.dock.fallHeight);
+		//app.docks[2].locked = true;
 		
-		app.dock.draw(app.ctx);
+		app.docks.update();
  		
 		requestAnimationFrame(this.update.bind(this));
 	}

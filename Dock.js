@@ -7,10 +7,10 @@ app.Dock = function(){
 
 	function Dock(x,y, platformHeight){
 		
-		this.fallHeight = 5;
+		this.fallHeight = 1;
 		this.platformStartHeight = platformHeight;
 		
-		var lock = false;
+		var locked = false;
 		
 		this.platformHeight = platformHeight;
 		
@@ -36,7 +36,7 @@ app.Dock = function(){
 		this.pistionX = this.cirX - (this.pistionW/2);
 		
 		this.pistionY = this.platformY + this.platformH;
-		this.pistionH = this.baseY - this.pistionY ;
+		this.pistionH = this.baseY - this.pistionY;
 		
 	}
 
@@ -44,7 +44,7 @@ app.Dock = function(){
 	
 	p.draw = function(ctx){
 	
-	
+
 		ctx.fillStyle = this.bodyFillStlye;
 		
 		ctx.fillRect(this.pistionX, this.pistionY, this.pistionW, this.pistionH);
@@ -57,7 +57,11 @@ app.Dock = function(){
 		ctx.beginPath();
 		ctx.arc(this.cirX,this.cirY, this.cirR,0, Math.PI*2, false);
 		ctx.closePath();
-		ctx.fillStyle = this.cirUnlockFillStyle;
+		if(this.locked) { 
+			ctx.fillStyle = this.cirlockFillStyle;
+		} else {
+			ctx.fillStyle = this.cirUnlockFillStyle;
+		}
 		ctx.fill();
 		
 
@@ -72,6 +76,7 @@ app.Dock = function(){
 		
 		this.platformY = this.baseY - this.platformHeight - this.platformH;
 		this.pistionY = this.platformY + this.platformH;
+		this.pistionH = this.baseY - this.pistionY;
 	
 	}
 	

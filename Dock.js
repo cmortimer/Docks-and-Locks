@@ -12,9 +12,11 @@ app.Dock = function(){
 		
 		var lock = false;
 		
+		this.platformHeight = platformHeight;
+		
 		this.cirX = x;
 		this.cirY = y;
-		this.cirR = 50;
+		this.cirR = 25;
 		this.cirUnlockFillStyle = "#00f";
 		this.cirLockFillStyle = "#f00";
 
@@ -28,13 +30,14 @@ app.Dock = function(){
 		this.platformW = 150;
 		this.platformH = 20;
 		this.platformX = this.cirX - (this.platformW/2);
-		this.platformY = this.baseY - platformHeight - this.platformH;
+		this.platformY = this.baseY - this.platformHeight - this.platformH;
 		
 		this.pistionW = 20;
 		this.pistionX = this.cirX - (this.pistionW/2);
 		
-		this.pistionH = this.pistionY - this.baseY;
-		this.pistionY = this.platformY + this.platformH + this.pistionH ;
+		this.pistionY = this.platformY + this.platformH;
+		this.pistionH = this.baseY - this.pistionY ;
+		
 	}
 
 	var p = Dock.prototype;
@@ -61,6 +64,15 @@ app.Dock = function(){
 
 
 		
+	}
+	
+	p.setPlatformHeight = function(amount){
+	
+		this.platformHeight += amount;
+		
+		this.platformY = this.baseY - this.platformHeight - this.platformH;
+		this.pistionY = this.platformY + this.platformH;
+	
 	}
 	
 	return Dock;

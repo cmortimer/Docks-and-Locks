@@ -15,16 +15,38 @@
 	
 	
 	<script src="Dock.js"></script>
+	<script src="Player.js"></script>
 	
 	<script>
 	
 	"use strict";
 	var app = app || {};
 	
+	//Keyboard
+	app.Keyboard = function(){
+		this.left = 37;
+		this.up = 38;
+		this.right = 39;
+		this.down = 40;
+	}
+	
+	app.keydown = [];
+	
 	window.onload = function(){
 	
 		app.canvasWIDTH = 1280;
 		app.canvasHEIGHT = 720;
+		app.dt = 1/60.0;	//placeholder, will be more accurate later
+		
+		//Keyboard
+		app.keyboard = new app.Keyboard();
+		window.addEventListener("keydown", function(e){
+			app.keydown[e.keyCode] = true;
+		});
+		
+		window.addEventListener("keyup", function(e){
+			app.keydown[e.keyCode] = false;
+		});
 		
 		app.docks = [];
 		
@@ -82,6 +104,25 @@
 			}
 		}
 		
+		//Player
+		app.player = new app.Player(10, 10, 20, 30);
+		console.log(app.player);
+		
+		app.player.update = function(){
+			if(app.keydown[app.keyboard.left]){
+				app.player.moveLeft(app.dt);
+			}
+			if(app.keydown[app.keyboard.right]){
+				app.player.moveRight(app.dt);
+			}
+			if(app.keydown[app.keyboard.up]){
+				app.player.jump();
+			}
+			app.player.moveVertically(100, app.dt);
+			app.player.draw(app.ctx);
+		}
+		
+		
 		
 		
 		app.update();
@@ -99,6 +140,7 @@
 		//app.docks[2].locked = true;
 		
 		app.docks.update();
+		app.player.update();
  		
 		requestAnimationFrame(this.update.bind(this));
 	}

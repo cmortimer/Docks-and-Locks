@@ -6,52 +6,67 @@
 
 var app = app || {};
 
-app.player = {
-	//Constants
-	gameState: 0,
-	x: 15,
-	y: 100,
-	jumpHeight: 50,
-	maxHeight: undefined,
-	sourceX: 0,
-	sourceY: 0,
-	sourceWidth: 0,
-	sourceHeight: 0,
-	width: 25,
-	height: 50,
-	speed: 50,
-	image: undefined,
-	drawLib: undefined,
+app.Player = function(){
 	
-	//States
-	STATE_RUNNING: 0,
-	STATE_JUMPING: 1, 
-	STATE_LOCKING: 2,
+	function Player(_x, _y, _w, _h){
+		//Constants
+		var gameState = 2;
+		this.x = _x;
+		this.y = _y;
+		this.jumpHeight = 50;
+		this.maxHeight;
+		this.sourceX = 0;
+		this.sourceY = 0;
+		this.sourceWidth = 0;
+		this.sourceHeight = 0;
+		this.width = _w;
+		this.height = _h;
+		this.speed = 200;
+		this.image;
+		this.drawLib;
+		
+		//States
+		this.STATE_RUNNING = 0;
+		this.STATE_JUMPING = 1;
+		this.STATE_FALLING = 2;
+		this.STATE_LOCKING = 3;
+	}
 	
-	init: function(){
-		console.log("app.Player.init() called");
-	},
+	var p = Player.prototype;
 	
-	moveRight: function(dt){
+	
+	p.moveRight = function(dt){
 		this.x += this.speed * dt;
-	},
+	}
 	
-	moveLeft: function(dt){
+	p.moveLeft = function(dt){
 		this.x -= this.speed * dt;
-	},
+	}
 	
-	jump: function(){
-		maxHeight = this.y + this.jumpHeight;
-		gameState = this.STATE_JUMPING;
-	},
+	p.jump = function(){
+		if(this.gameState != this.STATE_JUMPING){
+			this.maxHeight = this.y - this.jumpHeight;
+			this.gameState = this.STATE_JUMPING;
+		}
+	}
 	
-	moveUp: function(dt){
-		this.y -= this.speed * dt;
-	},
+	p.moveVertically = function(gravity, dt){
+		if(this.gameState == this.STATE_JUMPING){
+			this.y -= this.speed * dt;
+			if(this.y <= this.maxHeight){
+				this.gameState = this.STATE_FALLING;
+			}
+		}
+			this.y += gravity * dt;
+	}
 	
-	moveDown: function(dt){
-		this.y += gravity * dt;
-	},
+	//Currently just draws a rectangle
+	p.draw = function(ctx){
+		ctx.save();
+		ctx.fillStyle = 'red';
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+		ctx.restore();
+	}
 	
-	
-}
+	return Player;
+}();

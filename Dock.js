@@ -9,6 +9,7 @@ app.Dock = function(){
 		
 		this.fallHeight = 1;
 		this.platformStartHeight = platformHeight;
+		this.platformMinHeight = 10;
 		
 		var locked = false;
 		
@@ -71,6 +72,11 @@ app.Dock = function(){
 	}
 	
 	p.setPlatformHeight = function(amount){
+	
+		if(this.platformHeight <= this.platformMinHeight){
+			this.platformHeight = this.platformMinHeight;
+			return;
+		}
 	
 		this.platformHeight += amount;
 		

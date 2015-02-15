@@ -31,7 +31,7 @@
 		app.canvas.height = app.canvasHEIGHT;
 		app.ctx = app.canvas.getContext('2d');
 		
-		app.dock = new app.Dock(100,500,50);
+		app.dock = new app.Dock(100,500,100);
 		
 		console.log(app.dock);
 		
@@ -52,7 +52,7 @@
 		this.ctx.fillRect(0,0,app.canvasWIDTH,app.canvasHEIGHT);
 	
 		
-		app.dock.setPlatformHeight(this.dock.fallHeight);
+		app.dock.setPlatformHeight(-this.dock.fallHeight);
 		
 		app.dock.draw(app.ctx);
  		

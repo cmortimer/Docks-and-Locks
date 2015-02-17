@@ -10,10 +10,10 @@ app.Player = function(){
 	
 	function Player(_x, _y, _w, _h){
 		//Constants
-		var gameState = 2;
+		var gameState = 0;
 		this.x = _x;
 		this.y = _y;
-		this.jumpHeight = 50;
+		this.jumpHeight = 175;
 		this.maxHeight;
 		this.sourceX = 0;
 		this.sourceY = 0;
@@ -29,7 +29,6 @@ app.Player = function(){
 		this.STATE_RUNNING = 0;
 		this.STATE_JUMPING = 1;
 		this.STATE_FALLING = 2;
-		this.STATE_LOCKING = 3;
 	}
 	
 	var p = Player.prototype;
@@ -44,7 +43,7 @@ app.Player = function(){
 	}
 	
 	p.jump = function(){
-		if(this.gameState != this.STATE_JUMPING){
+		if(this.gameState == this.STATE_RUNNING){
 			this.maxHeight = this.y - this.jumpHeight;
 			this.gameState = this.STATE_JUMPING;
 		}
@@ -57,6 +56,7 @@ app.Player = function(){
 				this.gameState = this.STATE_FALLING;
 			}
 		}
+		else
 			this.y += gravity * dt;
 	}
 	

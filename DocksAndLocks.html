@@ -15,6 +15,7 @@
 	
 	
 	<script src="Dock.js"></script>
+	<script src="Platform.js"></script>
 	<script src="Player.js"></script>
 	
 	<script>
@@ -28,15 +29,20 @@
 		this.up = 38;
 		this.right = 39;
 		this.down = 40;
+		this.space = 32;
+		this.f = 70;
 	}
 	
 	app.keydown = [];
 	
 	window.onload = function(){
 	
+		//Variables
 		app.canvasWIDTH = 1280;
 		app.canvasHEIGHT = 720;
-		app.dt = 1/60.0;	//placeholder, will be more accurate later
+		app.dt = 0;
+		app.lastTime = 0;
+		app.deathHeight = 2.5 * app.canvasHEIGHT/4;
 		
 		//Keyboard
 		app.keyboard = new app.Keyboard();
@@ -48,27 +54,85 @@
 			app.keydown[e.keyCode] = false;
 		});
 		
-		app.docks = [];
+		//Gamestates
+		app.STATE_MENU = 0;
+		app.STATE_PLAYING = 1;
+		app.STATE_WON = 2;
+		app.STATE_LOST = 3;
+		app.gamestate = app.STATE_MENU;
 		
 		app.canvas = document.querySelector('canvas');
 		app.canvas.width = app.canvasWIDTH;
 		app.canvas.height = app.canvasHEIGHT;
 		app.ctx = app.canvas.getContext('2d');
 		
-		app.docks.push(new app.Dock(100,500,100));
-		app.docks.push(new app.Dock(300,500,100));
-		app.docks.push(new app.Dock(500,500,100));
+		//Game Objects
+		app.docks = [];
+		app.dockPlatforms = [];
+		app.player;
+		app.startPlatform;
+		app.endPlatform;
+		
+		//Create Docks
+		
+		app.docks.push(new app.Dock(200,500,100));
+		app.docks.push(new app.Dock(600,500,100));
+		app.docks.push(new app.Dock(1000,500,100));	
 		
 		console.log(app.docks[0]);
 		
+		//Create Player
+		app.player = new app.Player(10, 10, 20, 30);
+		console.log(app.player);
+		
+		//Create Platforms
+		app.startPlatform = new app.Platform(10, 50, 150, 20, true);
+		app.endPlatform = new app.Platform(1100, 150, 150, 20, true);
+		
+		for(var i = 0; i < app.docks.length; i++){
+			var d = app.docks[i];
+			app.dockPlatforms.push(new app.Platform(d.platformX, d.platformY, d.platformW, d.platformH, false));
+		}
+		
+		//Reset level
+		app.reset = function(){
+			//Recreate Docks
+			app.docks[0] = new app.Dock(200,500,100);
+			app.docks[1] = new app.Dock(600,500,100);
+			app.docks[2] = new app.Dock(1000,500,100);	
+			
+			//Reset Player
+			app.player.x = 10;
+			app.player.y = 10;
+			
+			
+			//Recreate Platforms
+			for(var i = 0; i < app.docks.length; i++){
+				var d = app.docks[i];
+				app.dockPlatforms[i] = new app.Platform(d.platformX, d.platformY, d.platformW, d.platformH, false);
+			}
+		}
+		
+		
+		//Docks
 		app.docks.update = function(){
 		
 			var indices = [];
 
 			for(var i = app.docks.length -1 ; i>=0; i--){
 				
-				//check player collision and junk faking for now
-				if(i == 0){
+				//check player collision
+				if(app.collides(app.player, app.dockPlatforms[i])){
+				
+					//adjust player height
+					app.player.y = app.dockPlatforms[i].y - app.player.height;
+					
+					//player is no longer falling
+					app.player.gameState = app.player.STATE_RUNNING;
+					
+					//check to see if the player wants to lock or unlock the platform
+					if(app.keydown[app.keyboard.space])	app.docks[i].locked = true;
+					if(app.keydown[app.keyboard.f])	app.docks[i].locked = false;
 				
 					// check to see if colliding platform is at is min height or locked
 					if(app.docks[i].platformHeight != app.docks[i].platformMinHeight && !app.docks[i].locked) {
@@ -105,8 +169,6 @@
 		}
 		
 		//Player
-		app.player = new app.Player(10, 10, 20, 30);
-		console.log(app.player);
 		
 		app.player.update = function(){
 			if(app.keydown[app.keyboard.left]){
@@ -118,11 +180,84 @@
 			if(app.keydown[app.keyboard.up]){
 				app.player.jump();
 			}
-			app.player.moveVertically(100, app.dt);
+			app.player.moveVertically(150, app.dt);
 			app.player.draw(app.ctx);
+			if(app.player.y > app.deathHeight && app.gamestate == app.STATE_PLAYING)	app.gamestate = app.STATE_LOST;
 		}
 		
 		
+		//Platforms 
+		
+		app.dockPlatforms.update = function(){	
+			for(var i = 0; i < app.dockPlatforms.length; i++){
+				var d = app.docks[i];
+				app.dockPlatforms[i].setY(d.platformY);
+				app.dockPlatforms[i].draw(app.ctx);
+			}
+		}
+		
+		//Collisions
+		
+		//Check if two rectangles are colliding
+		app.collides = function(a, b){
+			var ax = a.x + a.width/2;
+			var ay = a.y + a.height;
+			var bx = b.x;
+			var by = b.y;
+			
+			return ax < bx + b.width &&
+				   ax > bx &&
+				   ay < by + b.height &&
+				   ay > by;
+		}
+		
+		app.checkForCollisions = function(){
+			//Player and start platform
+			if(app.collides(app.player, app.startPlatform)){
+				app.player.y = app.startPlatform.y - app.player.height;
+				app.player.gamestate = app.player.STATE_RUNNING;
+			}
+				
+			//Player and end platform
+			if(app.collides(app.player, app.endPlatform) ){
+				app.player.y = app.endPlatform.y - app.player.height;
+				app.player.gameState = app.player.STATE_RUNNING;
+				app.gamestate = app.STATE_WON;
+			}
+		}
+		
+		
+		//Clamp
+		//Copied from Boomshine
+		/*
+		Function Name: clamp(val, min, max)
+		Author: Web - various sources
+		Return Value: the constrained value
+		Description: returns a value that is 
+			constrained between min and max (inclusive)
+		*/
+		app.clamp = function(val, min, max){
+			return Math.max(min, Math.min(max, val));
+		}
+		
+		//Calculate Delta Time
+		//Copied from Boomshine
+		app.calculateDeltaTime = function(){
+			var now, fps;
+			now = (+new Date);
+			fps = 1000 / (now - app.lastTime);
+			fps = app.clamp(fps, 12, 60);
+			app.lastTime = now;
+			return 1/fps;
+		}
+		
+		//Draw Text
+		//Copied from Boomshine
+		app.drawText = function(string, x, y, size, color){
+			app.ctx.font = 'bold '+size+'px Monospace';
+			app.ctx.fillStyle = color;
+			app.ctx.fillText(string, x, y);
+		}
 		
 		
 		app.update();
@@ -137,10 +272,49 @@
 		
 		this.ctx.fillRect(0,0,app.canvasWIDTH,app.canvasHEIGHT);
 		
-		//app.docks[2].locked = true;
-		
-		app.docks.update();
-		app.player.update();
+		if(app.gamestate == app.STATE_MENU){
+			app.drawText("Docks and Locks", app.canvasWIDTH/6, 100, 100, 'black');
+			app.drawText("Control your player with the arrow keys", app.canvasWIDTH/6 + 60, 250, 30, 'black');
+			app.drawText("Lock platforms with Space and unlock them with F", app.canvasWIDTH/6 + 10, 300, 30, 'black');
+			app.drawText("Get to the far right platform to finish the level", app.canvasWIDTH/6 + 10, 350, 30, 'black');
+			app.drawText("Press space to begin", app.canvasWIDTH/2 - 200, 400, 30, 'black');
+			//Check for spacebar
+			if(app.keydown[app.keyboard.space])	app.gamestate = app.STATE_PLAYING;
+		}
+		else if (app.gamestate == app.STATE_PLAYING){
+			//app.docks[2].locked = true;
+			this.ctx.fillStyle = "blue";
+			this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
+			app.docks.update();
+			app.player.update();
+			app.dockPlatforms.update();
+			app.checkForCollisions();
+			app.startPlatform.draw(app.ctx);
+			app.endPlatform.draw(app.ctx);
+			app.dt = app.calculateDeltaTime();
+		}
+		else if (app.gamestate == app.STATE_WON){
+			this.ctx.fillStyle = "blue";
+			this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
+			for(var i = 0; i < app.docks.length; i++)	app.docks[i].draw(app.ctx);
+			app.player.draw(app.ctx);
+			app.startPlatform.draw(app.ctx);
+			app.endPlatform.draw(app.ctx);
+			app.drawText("LEVEL COMPLETE!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 100, 'black');
+			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 100, 'black');
+			if(app.keydown[app.keyboard.space]){
+				app.reset();
+				app.gamestate = app.STATE_PLAYING;
+			}
+		}
+		else if (app.gamestate == app.STATE_LOST){
+			app.drawText("YOU FELL IN!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 100, 'black');
+			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 100, 'black');
+			if(app.keydown[app.keyboard.space]){
+				app.reset();
+				app.gamestate = app.STATE_PLAYING;
+			}
+		}
  		
 		requestAnimationFrame(this.update.bind(this));
 	}

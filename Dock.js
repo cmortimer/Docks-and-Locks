@@ -73,7 +73,7 @@ app.Dock = function(){
 	
 	p.setPlatformHeight = function(amount){
 	
-		if(this.platformHeight <= this.platformMinHeight){
+		if(this.platformHeight +amount <= this.platformMinHeight){
 			this.platformHeight = this.platformMinHeight;
 			return;
 		}

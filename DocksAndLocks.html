@@ -75,9 +75,9 @@
 		
 		//Create Docks
 		
-		app.docks.push(new app.Dock(200,500,100));
+		app.docks.push(new app.Dock(200,500,140));
 		app.docks.push(new app.Dock(600,500,100));
-		app.docks.push(new app.Dock(1000,500,100));	
+		app.docks.push(new app.Dock(1000,500,60));	
 		
 		console.log(app.docks[0]);
 		
@@ -97,9 +97,9 @@
 		//Reset level
 		app.reset = function(){
 			//Recreate Docks
-			app.docks[0] = new app.Dock(200,500,100);
+			app.docks[0] = new app.Dock(200,500,140);
 			app.docks[1] = new app.Dock(600,500,100);
-			app.docks[2] = new app.Dock(1000,500,100);	
+			app.docks[2] = new app.Dock(1000,500,60);	
 			
 			//Reset Player
 			app.player.x = 10;

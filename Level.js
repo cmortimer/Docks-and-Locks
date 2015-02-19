@@ -4,7 +4,7 @@ var app = app || {};
 
 app.Level = function(){
 
-	function Level(){
+	function Level(_player,_docks,_start,_end){
 	
 	}
 	

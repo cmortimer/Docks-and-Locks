@@ -11,7 +11,10 @@ app.Dock = function(){
 		this.platformStartHeight = platformHeight;
 		this.platformMinHeight = 10;
 		
+		
 		this.locked = islocked || false;
+		
+		this.startLocked = this.locked;
 		
 		this.platformHeight = platformHeight;
 		
@@ -79,6 +82,17 @@ app.Dock = function(){
 		ctx.restore();
 
 		
+	}
+	
+	p.reset = function(){
+		this.platformHeight = this.platformStartHeight;
+		
+		this.locked = this.startLocked;
+		
+		this.platformY = this.baseY - this.platformHeight - this.platformH;
+		this.pistionY = this.platformY + this.platformH;
+		this.pistionH = this.baseY - this.pistionY;
+	
 	}
 	
 	p.setPlatformHeight = function(amount){

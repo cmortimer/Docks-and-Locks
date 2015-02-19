@@ -98,9 +98,9 @@
 		//Reset level
 		app.reset = function(){
 			//Recreate Docks
-			app.docks[0] = new app.Dock(200,500,140,true);
-			app.docks[1] = new app.Dock(600,500,100);
-			app.docks[2] = new app.Dock(1000,500,60);	
+			app.docks[0].reset();
+			app.docks[1].reset();
+			app.docks[2].reset();
 			
 			//Reset Player
 			app.player.x = 10;
@@ -110,7 +110,7 @@
 			//Recreate Platforms
 			for(var i = 0; i < app.docks.length; i++){
 				var d = app.docks[i];
-				app.dockPlatforms[i] = new app.Platform(d.platformX, d.platformY, d.platformW, d.platformH, false);
+				app.dockPlatforms[i].setY(d.platformY);
 			}
 		}
 		

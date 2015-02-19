@@ -42,6 +42,8 @@ app.Dock = function(){
 		this.pistionY = this.platformY + this.platformH;
 		this.pistionH = this.baseY - this.pistionY;
 		
+		this.platform = new app.Platform(this.platformX,this.platformY,this.platformW,this.platformH,false);
+		
 	}
 
 	var p = Dock.prototype;
@@ -92,6 +94,8 @@ app.Dock = function(){
 		this.platformY = this.baseY - this.platformHeight - this.platformH;
 		this.pistionY = this.platformY + this.platformH;
 		this.pistionH = this.baseY - this.pistionY;
+		
+		this.platform.setY(this.platformY);
 	
 	}
 	
@@ -107,6 +111,8 @@ app.Dock = function(){
 		this.platformY = this.baseY - this.platformHeight - this.platformH;
 		this.pistionY = this.platformY + this.platformH;
 		this.pistionH = this.baseY - this.pistionY;
+		
+		this.platform.setY(this.platformY);
 	
 	}
 	

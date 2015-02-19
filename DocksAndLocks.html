@@ -13,9 +13,8 @@
 		Get a real browser!
 	</canvas>
 	
-	
-	<script src="Dock.js"></script>
 	<script src="Platform.js"></script>
+	<script src="Dock.js"></script>
 	<script src="Player.js"></script>
 	
 	<script>
@@ -90,10 +89,6 @@
 		app.startPlatform = new app.Platform(10, 50, 150, 20, true);
 		app.endPlatform = new app.Platform(1100, 150, 150, 20, true);
 		
-		for(var i = 0; i < app.docks.length; i++){
-			var d = app.docks[i];
-			app.dockPlatforms.push(new app.Platform(d.platformX, d.platformY, d.platformW, d.platformH, false));
-		}
 		
 		//Reset level
 		app.reset = function(){
@@ -117,16 +112,19 @@
 		
 		//Docks
 		app.docks.update = function(){
+
 		
 			var indices = [];
 
-			for(var i = app.docks.length -1 ; i>=0; i--){
+			for(var i = app.docks.length -1; i>=0; i--){
 				
 				//check player collision
-				if(app.collides(app.player, app.dockPlatforms[i])){
+				if(app.collides(app.player, app.docks[i].platform)){
+				
+					console.log(app.docks[0].platform);
 				
 					//adjust player height
-					app.player.y = app.dockPlatforms[i].y - app.player.height;
+					app.player.y = app.docks[i].platform.y - app.player.height;
 					
 					//player is no longer falling
 					app.player.gameState = app.player.STATE_RUNNING;
@@ -187,15 +185,7 @@
 		}
 		
 		
-		//Platforms 
-		
-		app.dockPlatforms.update = function(){	
-			for(var i = 0; i < app.dockPlatforms.length; i++){
-				var d = app.docks[i];
-				app.dockPlatforms[i].setY(d.platformY);
-				app.dockPlatforms[i].draw(app.ctx);
-			}
-		}
+	
 		
 		//Collisions
 		
@@ -288,7 +278,6 @@
 			this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
 			app.docks.update();
 			app.player.update();
-			app.dockPlatforms.update();
 			app.checkForCollisions();
 			app.startPlatform.draw(app.ctx);
 			app.endPlatform.draw(app.ctx);

@@ -5,13 +5,13 @@ var app = app || {};
 
 app.Dock = function(){
 
-	function Dock(x,y, platformHeight){
+	function Dock(x,y, platformHeight , islocked){
 		
 		this.fallHeight = 1;
 		this.platformStartHeight = platformHeight;
 		this.platformMinHeight = 10;
 		
-		var locked = false;
+		this.locked = islocked || false;
 		
 		this.platformHeight = platformHeight;
 		

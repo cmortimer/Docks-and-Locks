@@ -72,10 +72,10 @@ app.Dock = function(){
 		ctx.save();
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
+		
+		app.drawText(i, this.cirX, this.cirY, 20, "#fff");
 
-		ctx.font = 'bold 20px Monospace';
-		ctx.fillStyle = "#fff";
-		ctx.fillText(i, this.cirX, this.cirY);
+
 		ctx.restore();
 
 		

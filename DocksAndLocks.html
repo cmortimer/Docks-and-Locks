@@ -297,7 +297,7 @@
 		else if (app.gamestate == app.STATE_WON){
 			this.ctx.fillStyle = "blue";
 			this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
-			for(var i = 0; i < app.docks.length; i++)	app.docks[i].draw(app.ctx);
+			for(var i = 0; i < app.docks.length; i++)	app.docks[i].draw(app.ctx , i  + 1);
 			app.player.draw(app.ctx);
 			app.startPlatform.draw(app.ctx);
 			app.endPlatform.draw(app.ctx);

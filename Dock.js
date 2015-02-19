@@ -43,7 +43,7 @@ app.Dock = function(){
 
 	var p = Dock.prototype;
 	
-	p.draw = function(ctx){
+	p.draw = function(ctx ,i){
 	
 
 		ctx.fillStyle = this.bodyFillStlye;
@@ -64,9 +64,19 @@ app.Dock = function(){
 			ctx.fillStyle = this.cirUnlockFillStyle;
 		}
 		ctx.fill();
+
+
 		
+		//console.log(i);
+		
+		ctx.save();
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
 
-
+		ctx.font = 'bold 20px Monospace';
+		ctx.fillStyle = "#fff";
+		ctx.fillText(i, this.cirX, this.cirY);
+		ctx.restore();
 
 		
 	}

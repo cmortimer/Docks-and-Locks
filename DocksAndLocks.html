@@ -32,6 +32,7 @@
 		this.space = 32;
 		this.f = 70;
 	}
+
 	
 	app.keydown = [];
 	
@@ -164,7 +165,7 @@
 						}
 					}
 				}
-				app.docks[i].draw(app.ctx);
+				app.docks[i].draw(app.ctx,i + 1);
 			}
 		}
 		

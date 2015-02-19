@@ -16,6 +16,7 @@
 	<script src="Platform.js"></script>
 	<script src="Dock.js"></script>
 	<script src="Player.js"></script>
+	<script src="Level.js"></script>
 	
 	<script>
 	
@@ -67,105 +68,32 @@
 		app.ctx = app.canvas.getContext('2d');
 		
 		//Game Objects
-		app.docks = [];
-		app.dockPlatforms = [];
+		var docks = [];
+
+		
+		var startPlatform;
+		var endPlatform;
+		app.levels = [];
+		app.activeLevel;
 		app.player;
-		app.startPlatform;
-		app.endPlatform;
 		
 		//Create Docks
 		
-		app.docks.push(new app.Dock(200,500,140,true));
-		app.docks.push(new app.Dock(600,500,100));
-		app.docks.push(new app.Dock(1000,500,60));	
-		
-		console.log(app.docks[0]);
+		docks.push(new app.Dock(200,500,140,true));
+		docks.push(new app.Dock(600,500,100));
+		docks.push(new app.Dock(1000,500,60));
+
+		//Create Platforms
+		startPlatform = new app.Platform(10, 50, 150, 20, true);
+		endPlatform = new app.Platform(1100, 150, 150, 20, true);		
 		
 		//Create Player
 		app.player = new app.Player(10, 10, 20, 30);
 		console.log(app.player);
 		
-		//Create Platforms
-		app.startPlatform = new app.Platform(10, 50, 150, 20, true);
-		app.endPlatform = new app.Platform(1100, 150, 150, 20, true);
+		app.levels.push( new app.Level(docks,startPlatform,endPlatform));
 		
-		
-		//Reset level
-		app.reset = function(){
-			//Recreate Docks
-			app.docks[0].reset();
-			app.docks[1].reset();
-			app.docks[2].reset();
-			
-			//Reset Player
-			app.player.x = 10;
-			app.player.y = 10;
-			
-			
-			//Recreate Platforms
-			for(var i = 0; i < app.docks.length; i++){
-				var d = app.docks[i];
-				app.dockPlatforms[i].setY(d.platformY);
-			}
-		}
-		
-		
-		//Docks
-		app.docks.update = function(){
-
-		
-			var indices = [];
-
-			for(var i = app.docks.length -1; i>=0; i--){
-				
-				//check player collision
-				if(app.collides(app.player, app.docks[i].platform)){
-				
-					console.log(app.docks[0].platform);
-				
-					//adjust player height
-					app.player.y = app.docks[i].platform.y - app.player.height;
-					
-					//player is no longer falling
-					app.player.gameState = app.player.STATE_RUNNING;
-					
-					//check to see if the player wants to lock or unlock the platform
-					if(app.keydown[app.keyboard.space])	app.docks[i].locked = true;
-					if(app.keydown[app.keyboard.f])	app.docks[i].locked = false;
-				
-					// check to see if colliding platform is at is min height or locked
-					if(app.docks[i].platformHeight != app.docks[i].platformMinHeight && !app.docks[i].locked) {
-					
-						//go though loop and add docks ahead in the list till you hit a lock then break
-						for(var j = i +1; j <app.docks.length; j++){
-							if(!app.docks[j].locked){
-								indices.push(j);
-							} else {
-								break;
-							}
-						}
-						
-						//same as above opposite direction
-						for(var j = i -1; j >= 0; j--){
-							if(!app.docks[j].locked){
-								indices.push(j);
-							} else {
-								break;
-							}
-						}
-					
-						//if can move water the system do so. 
-						if(indices.length != 0){
-							app.docks[i].setPlatformHeight(-app.docks[i].fallHeight);
-							for(var k = indices.length -1; k>=0; k--){
-								app.docks[indices[k]].setPlatformHeight(app.docks[i].fallHeight/indices.length);
-							}
-						}
-					}
-				}
-				app.docks[i].draw(app.ctx,i + 1);
-			}
-		}
+		app.activeLevel = app.levels[0];
 		
 		//Player
 		
@@ -201,23 +129,7 @@
 				   ay < by + b.height &&
 				   ay > by;
 		}
-		
-		app.checkForCollisions = function(){
-			//Player and start platform
-			if(app.collides(app.player, app.startPlatform)){
-				app.player.y = app.startPlatform.y - app.player.height;
-				app.player.gamestate = app.player.STATE_RUNNING;
-			}
 				
-			//Player and end platform
-			if(app.collides(app.player, app.endPlatform) ){
-				app.player.y = app.endPlatform.y - app.player.height;
-				app.player.gameState = app.player.STATE_RUNNING;
-				app.gamestate = app.STATE_WON;
-			}
-		}
-		
-		
 		//Clamp
 		//Copied from Boomshine
 		/*
@@ -276,24 +188,23 @@
 			//app.docks[2].locked = true;
 			this.ctx.fillStyle = "blue";
 			this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
-			app.docks.update();
+			app.activeLevel.docksUpdateAndDraw();
 			app.player.update();
-			app.checkForCollisions();
-			app.startPlatform.draw(app.ctx);
-			app.endPlatform.draw(app.ctx);
+			app.activeLevel.checkForCollisions();
+			app.activeLevel.drawPlatforms();
 			app.dt = app.calculateDeltaTime();
 		}
 		else if (app.gamestate == app.STATE_WON){
 			this.ctx.fillStyle = "blue";
 			this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
-			for(var i = 0; i < app.docks.length; i++)	app.docks[i].draw(app.ctx , i  + 1);
+			app.activeLevel.docksUpdateAndDraw();
 			app.player.draw(app.ctx);
-			app.startPlatform.draw(app.ctx);
-			app.endPlatform.draw(app.ctx);
+			app.activeLevel.drawPlatforms();
 			app.drawText("LEVEL COMPLETE!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 100, 'black');
 			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 100, 'black');
 			if(app.keydown[app.keyboard.space]){
-				app.reset();
+			
+				app.activeLevel.reset();
 				app.gamestate = app.STATE_PLAYING;
 			}
 		}
@@ -301,7 +212,7 @@
 			app.drawText("YOU FELL IN!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 100, 'black');
 			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 100, 'black');
 			if(app.keydown[app.keyboard.space]){
-				app.reset();
+				app.activeLevel.reset();
 				app.gamestate = app.STATE_PLAYING;
 			}
 		}

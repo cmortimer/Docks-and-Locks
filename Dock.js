@@ -69,10 +69,6 @@ app.Dock = function(){
 			ctx.fillStyle = this.cirUnlockFillStyle;
 		}
 		ctx.fill();
-
-
-		
-		//console.log(i);
 		
 		ctx.save();
 		ctx.textAlign = "center";

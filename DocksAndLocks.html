@@ -44,15 +44,33 @@
 		app.dt = 0;
 		app.lastTime = 0;
 		app.deathHeight = 2.5 * app.canvasHEIGHT/4;
+		app.allowPress = true;
 		
 		//Keyboard
 		app.keyboard = new app.Keyboard();
+		app.keyPress = function(e){
+			if(e.keyCode == 32){
+				if(app.allowPress){
+					app.keydown[e.keyCode] = true;
+					app.allowPress = false;
+				}
+			}
+			else
+				app.keydown[e.keyCode] = true;
+		}
+		
+		app.keyRelease = function(e){
+			app.keydown[e.keyCode] = false;
+			if(e.keyCode == 32)
+				app.allowPress = true;
+		}
+		
 		window.addEventListener("keydown", function(e){
-			app.keydown[e.keyCode] = true;
+			app.keyPress(e);
 		});
 		
 		window.addEventListener("keyup", function(e){
-			app.keydown[e.keyCode] = false;
+			app.keyRelease(e);
 		});
 		
 		//Gamestates
@@ -68,32 +86,56 @@
 		app.ctx = app.canvas.getContext('2d');
 		
 		//Game Objects
-		var docks = [];
+		var docks = [[],[],[]];
 
 		
 		var startPlatform;
-		var endPlatform;
+		var endPlatforms = [];
 		app.levels = [];
 		app.activeLevel;
+		app.levelNumber = 0;
+		app.switchLevel = false;
 		app.player;
 		
 		//Create Docks
 		
-		docks.push(new app.Dock(200,500,140,true));
-		docks.push(new app.Dock(600,500,100));
-		docks.push(new app.Dock(1000,500,60));
+		//Level 1
+		docks[0].push(new app.Dock(300, 500, 140, true));
+		docks[0].push(new app.Dock(600, 500, 30));
+		
+		
+		//Level 2
+		docks[1].push(new app.Dock(270,500,150,true));
+		docks[1].push(new app.Dock(600,500,100));
+		docks[1].push(new app.Dock(970,500,70));
+		
+		//Level 3
+		docks[2].push(new app.Dock(270,500,150));
+		docks[2].push(new app.Dock(600,500,120, true));
+		docks[2].push(new app.Dock(970,500,60));
 
 		//Create Platforms
+		//Level 1
 		startPlatform = new app.Platform(10, 50, 150, 20, true);
-		endPlatform = new app.Platform(1100, 150, 150, 20, true);		
+		endPlatforms.push(new app.Platform(800, 150, 150, 20, true));	
+		
+		
+		//Level 2
+		endPlatforms.push(new app.Platform(1100, 150, 150, 20, true));		
+		
+		//Level 3
+		endPlatforms.push(new app.Platform(1100, 150, 150, 20, true));	
 		
 		//Create Player
 		app.player = new app.Player(10, 10, 20, 30);
 		console.log(app.player);
 		
-		app.levels.push( new app.Level(docks,startPlatform,endPlatform));
+		app.levels.push(new app.Level(docks[0], startPlatform, endPlatforms[0]));
+		app.levels.push( new app.Level(docks[1],startPlatform,endPlatforms[1]));
+		app.levels.push( new app.Level(docks[2],startPlatform,endPlatforms[2]));
 		
 		app.activeLevel = app.levels[0];
+		app.levelNumber = 0;
 		
 		//Player
 		
@@ -107,7 +149,7 @@
 			if(app.keydown[app.keyboard.up]){
 				app.player.jump();
 			}
-			app.player.moveVertically(150, app.dt);
+			app.player.moveVertically(200, app.dt);
 			app.player.draw(app.ctx);
 			if(app.player.y > app.deathHeight && app.gamestate == app.STATE_PLAYING)	app.gamestate = app.STATE_LOST;
 		}
@@ -176,22 +218,41 @@
 		this.ctx.fillRect(0,0,app.canvasWIDTH,app.canvasHEIGHT);
 		
 		if(app.gamestate == app.STATE_MENU){
-			app.drawText("Docks and Locks", app.canvasWIDTH/6, 100, 100, 'black');
+			app.drawText("Docks and Locks", app.canvasWIDTH/6, 100, 90, 'black');
 			app.drawText("Control your player with the arrow keys", app.canvasWIDTH/6 + 60, 250, 30, 'black');
-			app.drawText("Lock platforms with Space and unlock them with F", app.canvasWIDTH/6 + 10, 300, 30, 'black');
+			app.drawText("Lock and unlock platforms with Space", app.canvasWIDTH/6 + 60, 300, 30, 'black');
 			app.drawText("Get to the far right platform to finish the level", app.canvasWIDTH/6 + 10, 350, 30, 'black');
 			app.drawText("Press space to begin", app.canvasWIDTH/2 - 200, 400, 30, 'black');
 			//Check for spacebar
-			if(app.keydown[app.keyboard.space])	app.gamestate = app.STATE_PLAYING;
+			if(app.keydown[app.keyboard.space]){
+				app.gamestate = app.STATE_PLAYING;
+				app.levelNumber = 0;
+				app.activeLevel = app.levels[app.levelNumber];
+				app.activeLevel.reset();
+				app.keydown[32] = false;
+			}
 		}
 		else if (app.gamestate == app.STATE_PLAYING){
 			//app.docks[2].locked = true;
-			this.ctx.fillStyle = "blue";
-			this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
-			app.activeLevel.docksUpdateAndDraw();
-			app.player.update();
-			app.activeLevel.checkForCollisions();
-			app.activeLevel.drawPlatforms();
+			if(app.switchLevel){
+				app.drawText("LEVEL COMPLETE!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 90, 'black');
+				app.drawText("PRESS SPACE TO CONTINUE!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 90, 'black');
+				if(app.keydown[app.keyboard.space]){
+					app.keydown[32] = false;
+					app.levelNumber++;
+					app.activeLevel = app.levels[app.levelNumber];
+					app.switchLevel = false;
+					app.activeLevel.reset();
+				}
+			}
+			else{
+				this.ctx.fillStyle = "blue";
+				this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
+				app.activeLevel.docksUpdateAndDraw();
+				app.player.update();
+				app.activeLevel.checkForCollisions();
+				app.activeLevel.drawPlatforms();
+			}
 			app.dt = app.calculateDeltaTime();
 		}
 		else if (app.gamestate == app.STATE_WON){
@@ -200,20 +261,20 @@
 			app.activeLevel.docksUpdateAndDraw();
 			app.player.draw(app.ctx);
 			app.activeLevel.drawPlatforms();
-			app.drawText("LEVEL COMPLETE!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 100, 'black');
-			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 100, 'black');
+			app.drawText("LEVEL COMPLETE!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 90, 'black');
+			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 90, 'black');
 			if(app.keydown[app.keyboard.space]){
-			
-				app.activeLevel.reset();
-				app.gamestate = app.STATE_PLAYING;
+				app.gamestate = app.STATE_MENU;
+				app.keydown[32] = false;
 			}
 		}
 		else if (app.gamestate == app.STATE_LOST){
-			app.drawText("YOU FELL IN!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 100, 'black');
-			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 100, 'black');
+			app.drawText("YOU FELL IN!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 90, 'black');
+			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 90, 'black');
 			if(app.keydown[app.keyboard.space]){
 				app.activeLevel.reset();
 				app.gamestate = app.STATE_PLAYING;
+				app.keydown[32] = false;
 			}
 		}
  		

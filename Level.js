@@ -23,56 +23,59 @@ app.Level = function(){
 	p.docksUpdateAndDraw = function(){
 
 		
-		var indices = [];
-
-		for(var i = this.docks.length -1; i>=0; i--){
-			
-			//check player collision
-			if(app.collides(app.player, this.docks[i].platform)){
-			
-				//adjust player height
-				app.player.y = this.docks[i].platform.y - app.player.height;
+			var indices = [];
+	
+			for(var i = this.docks.length -1; i>=0; i--){
 				
-				//player is no longer falling
-				app.player.gameState = app.player.STATE_RUNNING;
+				//check player collision
+				if(app.collides(app.player, this.docks[i].platform)){
 				
-				//check to see if the player wants to lock or unlock the platform
-				if(app.keydown[app.keyboard.space])	this.docks[i].locked = true;
-				if(app.keydown[app.keyboard.f])	this.docks[i].locked = false;
-			
-				// check to see if colliding platform is at is min height or locked
-				if(this.docks[i].platformHeight != this.docks[i].platformMinHeight && !this.docks[i].locked) {
-				
-					//go though loop and add docks ahead in the list till you hit a lock then break
-					for(var j = i +1; j <this.docks.length; j++){
-						if(!this.docks[j].locked){
-							indices.push(j);
-						} else {
-							break;
-						}
-					}
+					//adjust player height
+					app.player.y = this.docks[i].platform.y - app.player.height;
 					
-					//same as above opposite direction
-					for(var j = i -1; j >= 0; j--){
-						if(!this.docks[j].locked){
-							indices.push(j);
-						} else {
-							break;
-						}
+					//player is no longer falling
+					app.player.gameState = app.player.STATE_RUNNING;
+					
+					//check to see if the player wants to lock or unlock the platform
+					if(app.keydown[app.keyboard.space]){
+						this.docks[i].locked = !this.docks[i].locked;
+						app.keydown[32] = false;
 					}
+					//if(app.keydown[app.keyboard.f])	this.docks[i].locked = false;
 				
-					//if can move water the system do so. 
-					if(indices.length != 0){
-						this.docks[i].setPlatformHeight(-this.docks[i].fallHeight);
-						for(var k = indices.length -1; k>=0; k--){
-							this.docks[indices[k]].setPlatformHeight(this.docks[i].fallHeight/indices.length);
+					// check to see if colliding platform is at is min height or locked
+					if(this.docks[i].platformHeight != this.docks[i].platformMinHeight && !this.docks[i].locked) {
+					
+						//go though loop and add docks ahead in the list till you hit a lock then break
+						for(var j = i +1; j <this.docks.length; j++){
+							if(!this.docks[j].locked){
+								indices.push(j);
+							} else {
+								break;
+							}
+						}
+						
+						//same as above opposite direction
+						for(var j = i -1; j >= 0; j--){
+							if(!this.docks[j].locked){
+								indices.push(j);
+							} else {
+								break;
+							}
+						}
+					
+						//if can move water the system do so. 
+						if(indices.length != 0){
+							this.docks[i].setPlatformHeight(-this.docks[i].fallHeight);
+							for(var k = indices.length -1; k>=0; k--){
+								this.docks[indices[k]].setPlatformHeight(this.docks[i].fallHeight/indices.length);
+							}
 						}
 					}
 				}
+				this.docks[i].draw(app.ctx,i + 1);
 			}
-			this.docks[i].draw(app.ctx,i + 1);
 		}
-	}
 	
 	p.checkForCollisions = function(){
 		//Player and start platform
@@ -85,7 +88,15 @@ app.Level = function(){
 		if(app.collides(app.player, this.endPlatform) ){
 			app.player.y = this.endPlatform.y - app.player.height;
 			app.player.gameState = app.player.STATE_RUNNING;
-			app.gamestate = app.STATE_WON;
+			//Has the game been won?
+			if(app.levelNumber == app.levels.length - 1){
+				console.log("Won Game");
+				app.gamestate = app.STATE_WON;
+			}
+			else{
+				console.log("Next Level");
+				app.switchLevel = true;
+			}
 		}
 	}
 	

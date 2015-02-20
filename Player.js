@@ -10,7 +10,7 @@ app.Player = function(){
 	
 	function Player(_x, _y, _w, _h){
 		//Constants
-		var gameState = 0;
+		this.gameState = 0;
 		this.x = _x;
 		this.y = _y;
 		this.jumpHeight = 175;

@@ -19,7 +19,7 @@
 	<script src="Level.js"></script>
 	
 	<script>
-	
+	 
 	"use strict";
 	var app = app || {};
 	
@@ -59,7 +59,7 @@
 				app.keydown[e.keyCode] = true;
 		}
 		
-		app.keyRelease = function(e){
+		app.keyRelease = function(e){    
 			app.keydown[e.keyCode] = false;
 			if(e.keyCode == 32)
 				app.allowPress = true;
@@ -127,8 +127,7 @@
 		endPlatforms.push(new app.Platform(1100, 150, 150, 20, true));	
 		
 		//Create Player
-		app.player = new app.Player(10, 10, 20, 30);
-		console.log(app.player);
+		app.player = new app.Player(10, 10, 20, 30); 
 		
 		app.levels.push(new app.Level(docks[0], startPlatform, endPlatforms[0]));
 		app.levels.push( new app.Level(docks[1],startPlatform,endPlatforms[1]));
@@ -249,8 +248,9 @@
 				this.ctx.fillStyle = "blue";
 				this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
 				app.activeLevel.docksUpdateAndDraw();
-				app.player.update();
+				
 				app.activeLevel.checkForCollisions();
+				app.player.update();
 				app.activeLevel.drawPlatforms();
 			}
 			app.dt = app.calculateDeltaTime();

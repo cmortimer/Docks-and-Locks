@@ -78,10 +78,12 @@ app.Level = function(){
 		}
 	
 	p.checkForCollisions = function(){
+		
+		
 		//Player and start platform
 		if(app.collides(app.player, this.startPlatform)){
 			app.player.y = this.startPlatform.y - app.player.height;
-			app.player.gamestate = app.player.STATE_RUNNING;
+			app.player.gameState = app.player.STATE_RUNNING;
 		}
 			
 		//Player and end platform
@@ -89,6 +91,7 @@ app.Level = function(){
 			app.player.y = this.endPlatform.y - app.player.height;
 			app.player.gameState = app.player.STATE_RUNNING;
 			//Has the game been won?
+			console.log(app.player.gamestate);
 			if(app.levelNumber == app.levels.length - 1){
 				console.log("Won Game");
 				app.gamestate = app.STATE_WON;

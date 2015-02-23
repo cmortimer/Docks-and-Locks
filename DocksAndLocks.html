@@ -43,7 +43,7 @@
 		app.canvasHEIGHT = 720;
 		app.dt = 0;
 		app.lastTime = 0;
-		app.deathHeight = 2.5 * app.canvasHEIGHT/4;
+		app.deathHeight = 2.5 * app.canvasHEIGHT/4 + 100;
 		app.allowPress = true;
 		
 		//Keyboard
@@ -87,11 +87,13 @@
 		
 		//Game Objects
 		var docks = [[],[],[]];
+		var texts = [];
 
 		
 		var startPlatform;
 		var endPlatforms = [];
 		app.levels = [];
+	
 		app.activeLevel;
 		app.levelNumber = 0;
 		app.switchLevel = false;
@@ -100,38 +102,46 @@
 		//Create Docks
 		
 		//Level 1
-		docks[0].push(new app.Dock(300, 500, 140, true));
-		docks[0].push(new app.Dock(600, 500, 30));
+		docks[0].push(new app.Dock(300, 600, 140, true));
+		docks[0].push(new app.Dock(600, 600, 30));
 		
 		
 		//Level 2
-		docks[1].push(new app.Dock(270,500,150,true));
-		docks[1].push(new app.Dock(600,500,100));
-		docks[1].push(new app.Dock(970,500,70));
+		docks[1].push(new app.Dock(270,600,150,true));
+		docks[1].push(new app.Dock(600,600,100));
+		docks[1].push(new app.Dock(970,600,70));
 		
 		//Level 3
-		docks[2].push(new app.Dock(270,500,150));
-		docks[2].push(new app.Dock(600,500,120, true));
-		docks[2].push(new app.Dock(970,500,60));
+		docks[2].push(new app.Dock(270,600,150));
+		docks[2].push(new app.Dock(600,600,120, true));
+		docks[2].push(new app.Dock(970,600,60));
 
 		//Create Platforms
 		//Level 1
-		startPlatform = new app.Platform(10, 50, 150, 20, true);
-		endPlatforms.push(new app.Platform(800, 150, 150, 20, true));	
+		startPlatform = new app.Platform(10, 150, 150, 20, true);
+		endPlatforms.push(new app.Platform(800, 250, 150, 20, true));	
 		
 		
 		//Level 2
-		endPlatforms.push(new app.Platform(1100, 150, 150, 20, true));		
+		endPlatforms.push(new app.Platform(1100, 250, 150, 20, true));		
 		
 		//Level 3
-		endPlatforms.push(new app.Platform(1100, 150, 150, 20, true));	
+		endPlatforms.push(new app.Platform(1100, 250, 150, 20, true));	
+		
+		//text for levels 
+		texts.push("Press space to unlock a dock.");
+		texts.push("Pay attention to how water travels through the system.");
+		texts.push("If water can not travel through the system the docks won't raise.");
 		
 		//Create Player
 		app.player = new app.Player(10, 10, 20, 30); 
 		
-		app.levels.push(new app.Level(docks[0], startPlatform, endPlatforms[0]));
-		app.levels.push( new app.Level(docks[1],startPlatform,endPlatforms[1]));
-		app.levels.push( new app.Level(docks[2],startPlatform,endPlatforms[2]));
+		
+		
+		
+		app.levels.push(new app.Level(docks[0], startPlatform, endPlatforms[0], texts[0],docks[0][0].cirX, 50 ));
+		app.levels.push( new app.Level(docks[1],startPlatform,endPlatforms[1], texts[1],docks[0][1].cirX, 50));
+		app.levels.push( new app.Level(docks[2],startPlatform,endPlatforms[2],texts[2],docks[0][1].cirX, 50));
 		
 		app.activeLevel = app.levels[0];
 		app.levelNumber = 0;
@@ -246,7 +256,7 @@
 			}
 			else{
 				this.ctx.fillStyle = "blue";
-				this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
+				this.ctx.fillRect(0, app.deathHeight, app.canvasWIDTH, app.canvasHEIGHT/2);
 				app.activeLevel.docksUpdateAndDraw();
 				
 				app.activeLevel.checkForCollisions();
@@ -257,11 +267,11 @@
 		}
 		else if (app.gamestate == app.STATE_WON){
 			this.ctx.fillStyle = "blue";
-			this.ctx.fillRect(0, 2.5 * app.canvasHEIGHT/4, app.canvasWIDTH, app.canvasHEIGHT/2);
+			this.ctx.fillRect(0, app.deathHeight, app.canvasWIDTH, app.canvasHEIGHT/2);
 			app.activeLevel.docksUpdateAndDraw();
 			app.player.draw(app.ctx);
 			app.activeLevel.drawPlatforms();
-			app.drawText("LEVEL COMPLETE!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 90, 'black');
+			app.drawText("Game COMPLETE!", app.canvasWIDTH/6, app.canvasHEIGHT/2 - 50, 90, 'black');
 			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/6 - 150, app.canvasHEIGHT/2 + 50, 90, 'black');
 			if(app.keydown[app.keyboard.space]){
 				app.gamestate = app.STATE_MENU;

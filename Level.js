@@ -4,20 +4,37 @@ var app = app || {};
 
 app.Level = function(){
 
-	function Level(_docks,_start,_end){
+	function Level(_docks,_start,_end, _text, _textX, _textY){
 	
 		this.docks = _docks;
 		this.startPlatform = _start;
 		this.endPlatform = _end;
+		this.text = _text || ' ';
+		this.textX = _textX || -1000 ;
+		this.textY = _textY || -1000;
 	}
 	
 	var p = Level.prototype;
+	
 	
 
 	
 	p.drawPlatforms = function(){
 			this.startPlatform.draw(app.ctx);
 			this.endPlatform.draw(app.ctx);
+			this.drawText(app.ctx);
+	}
+	
+	p.drawText = function(ctx){
+	
+		ctx.save();
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		
+		app.drawText(this.text, this.textX, this.textY, 20, "#000");
+		
+		ctx.restore();
+	
 	}
 	
 	p.docksUpdateAndDraw = function(){

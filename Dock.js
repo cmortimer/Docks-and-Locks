@@ -11,6 +11,10 @@ app.Dock = function(){
 		this.platformStartHeight = platformHeight;
 		this.platformMinHeight = 10;
 		
+		this.lock = new Image();
+		
+		this.lock.src = "media/lock.png";
+		
 		
 		this.locked = islocked || false;
 		
@@ -60,21 +64,29 @@ app.Dock = function(){
 		ctx.fillRect(this.baseX, this.baseY, this.baseW, this.baseH);
 	
 		//circle 
-		ctx.beginPath();
-		ctx.arc(this.cirX,this.cirY, this.cirR,0, Math.PI*2, false);
-		ctx.closePath();
+
 		if(this.locked) { 
 			ctx.fillStyle = this.cirLockFillStyle;
+			
 		} else {
 			ctx.fillStyle = this.cirUnlockFillStyle;
 		}
+		
+		ctx.beginPath();
+		ctx.arc(this.cirX,this.cirY, this.cirR,0, Math.PI*2, false);
+		ctx.closePath();
+		
 		ctx.fill();
+		
+		if(this.locked) { 
+			ctx.drawImage(this.lock,this.cirX-this.cirR,this.cirY-this.cirR,this.cirR*2,this.cirR*2);
+		}
 		
 		ctx.save();
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 		
-		app.drawText(i, this.cirX, this.cirY, 20, "#fff");
+		app.drawText(i, this.cirX, this.cirY-(this.cirR/2)+2.5, 20, "#fff");
 
 
 		ctx.restore();

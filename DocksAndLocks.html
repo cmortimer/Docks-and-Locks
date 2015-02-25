@@ -5,6 +5,9 @@
 	<style type="text/css">
 		body { margin: 0; padding: 0; background: #999;}
 		canvas { display: block; margin: 0.5em auto; background: #fff; }
+		#audioEffects{
+			display:none;
+		}
 	</style>
 	<title>Dock and Lock</title>
 </head>
@@ -30,7 +33,6 @@
 		this.right = 39;
 		this.down = 40;
 		this.space = 32;
-		this.f = 70;
 	}
 
 	
@@ -45,6 +47,17 @@
 		app.lastTime = 0;
 		app.deathHeight = 2.5 * app.canvasHEIGHT/4 + 100;
 		app.allowPress = true;
+		
+		//Audio
+		app.bgAudio = document.querySelector('#bgAudio');
+		app.bgAudio.volume = 0.25;
+		app.pauseBG = false;
+		app.effectAudio;
+		app.effectAudio = document.querySelector('#effectAudio');
+		app.effectAudio.volume = 0.5;
+		app.winAudio = document.querySelector('#effectAudio');
+		app.winAudio.volume = 0.5;
+		
 		
 		//Keyboard
 		app.keyboard = new app.Keyboard();
@@ -180,6 +193,11 @@
 				   ay < by + b.height &&
 				   ay > by;
 		}
+		
+		app.playEffect = function(sound){
+			app.effectAudio.src = "media/" + sound;
+			app.effectAudio.play();
+		}
 				
 		//Clamp
 		//Copied from Boomshine
@@ -213,7 +231,7 @@
 			app.ctx.fillText(string, x, y);
 		}
 		
-		
+		app.bgAudio.play();
 		app.update();
 	
 	}
@@ -295,6 +313,16 @@
 	
 	
 	</script>
-	
+		<section id="audioEffects">
+			<audio id="bgAudio" src="media/background.mp3" controls loop></audio>
+			<audio id="effectAudio" controls></audio>
+			<audio id="winAudio" controls></audio>
+		</section>
+		<! Audio Credits
+			Lock - http://opengameart.org/content/key-pickup-2
+			Jump - http://opengameart.org/content/platformer-jumping-sounds
+			Background - http://opengameart.org/content/surfside
+			Win - http://opengameart.org/content/win-sound-1
+		>
 </body>
 </html>

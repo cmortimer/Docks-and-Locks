@@ -57,6 +57,7 @@ app.Level = function(){
 					if(app.keydown[app.keyboard.space]){
 						this.docks[i].locked = !this.docks[i].locked;
 						app.keydown[32] = false;
+						app.playEffect("lock.mp3");
 					}
 					//if(app.keydown[app.keyboard.f])	this.docks[i].locked = false;
 				
@@ -105,6 +106,7 @@ app.Level = function(){
 			
 		//Player and end platform
 		if(app.collides(app.player, this.endPlatform) ){
+			app.playEffect("win.wav");
 			app.player.y = this.endPlatform.y - app.player.height;
 			app.player.gameState = app.player.STATE_RUNNING;
 			//Has the game been won?

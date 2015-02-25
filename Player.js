@@ -44,6 +44,7 @@ app.Player = function(){
 	
 	p.jump = function(){
 		if(this.gameState == this.STATE_RUNNING){
+			app.playEffect("jump.wav");
 			this.maxHeight = this.y - this.jumpHeight;
 			this.gameState = this.STATE_JUMPING;
 		}

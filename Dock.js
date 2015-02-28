@@ -83,12 +83,7 @@ app.Dock = function(){
 		}
 		
 		ctx.save();
-		ctx.textAlign = "center";
-		ctx.textBaseline = "middle";
-		
 		app.drawText(i, this.cirX, this.cirY-(this.cirR/2)+2.5, 20, "#fff");
-
-
 		ctx.restore();
 
 		

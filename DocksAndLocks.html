@@ -265,10 +265,13 @@
 			}
 		}
 		else if (app.gamestate == app.STATE_PLAYING){
-			//app.docks[2].locked = true;
 			if(app.switchLevel){
+			
+				//add highScore stuff
+			
 				app.drawText("LEVEL COMPLETE!", app.canvasWIDTH/2, app.canvasHEIGHT/2 - 50, 60, 'black');
 				app.drawText("PRESS SPACE TO CONTINUE!", app.canvasWIDTH/2, app.canvasHEIGHT/2 + 50, 60, 'black');
+				app.drawText("Your time was:" + app.activeLevel.timer.toFixed(2) , app.canvasWIDTH/2, app.canvasHEIGHT/2 + 110, 50, 'black');
 				if(app.keydown[app.keyboard.space]){
 					app.keydown[32] = false;
 					app.levelNumber++;
@@ -281,7 +284,7 @@
 				this.ctx.fillStyle = "#001155";
 				this.ctx.fillRect(0, app.deathHeight, app.canvasWIDTH, app.canvasHEIGHT/2);
 				app.activeLevel.docksUpdateAndDraw();
-				
+				app.activeLevel.updateTimer(app.dt);
 				app.activeLevel.checkForCollisions();
 				app.player.update();
 				app.activeLevel.drawPlatforms();
@@ -289,7 +292,7 @@
 			app.dt = app.calculateDeltaTime();
 		}
 		else if (app.gamestate == app.STATE_WON){
-			this.ctx.fillStyle = "blue";
+			this.ctx.fillStyle = "#001155";
 			this.ctx.fillRect(0, app.deathHeight, app.canvasWIDTH, app.canvasHEIGHT/2);
 			app.activeLevel.docksUpdateAndDraw();
 			app.player.draw(app.ctx);

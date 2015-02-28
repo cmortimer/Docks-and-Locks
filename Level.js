@@ -12,11 +12,18 @@ app.Level = function(){
 		this.text = _text || ' ';
 		this.textX = _textX || -1000 ;
 		this.textY = _textY || -1000;
+		this.timer = 0;
+		this.highScore;
 	}
 	
 	var p = Level.prototype;
 	
-	
+	p.updateTimer = function(dt){
+		
+		this.timer += dt;
+		app.drawText("Timer: " + this.timer.toFixed(2), 1100, 50, 25, "#000");
+		
+	}
 
 	
 	p.drawPlatforms = function(){
@@ -125,6 +132,8 @@ app.Level = function(){
 		for( var i = this.docks.length -1; i >=0; i--){
 			this.docks[i].reset();
 		}
+		
+		this.timer =0;
 		
 		//Reset Player
 		app.player.x = 10;

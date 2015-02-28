@@ -106,6 +106,8 @@
 		var startPlatform;
 		var endPlatforms = [];
 		app.levels = [];
+		
+		app.highScores = [];
 	
 		app.activeLevel;
 		app.levelNumber = 0;
@@ -149,12 +151,21 @@
 		//Create Player
 		app.player = new app.Player(10, 10, 20, 30); 
 		
+		if(JSON.parse(localStorage.getItem('highScores') === null)){
+			app.highScores.push(99999);
+			app.highScores.push(99999);
+			app.highScores.push(99999);
+		}
+		else{
+			app.highScores = JSON.parse(localStorage.getItem('highScores'));
+		}
 		
 		
+		app.levels.push(new app.Level(docks[0], startPlatform, endPlatforms[0], texts[0],docks[0][0].cirX, 50,app.highScores[0]));
+		app.levels.push( new app.Level(docks[1],startPlatform,endPlatforms[1], texts[1],docks[0][1].cirX, 50,app.highScores[1]));
+		app.levels.push( new app.Level(docks[2],startPlatform,endPlatforms[2],texts[2],docks[0][1].cirX, 50,app.highScores[2]));
 		
-		app.levels.push(new app.Level(docks[0], startPlatform, endPlatforms[0], texts[0],docks[0][0].cirX, 50 ));
-		app.levels.push( new app.Level(docks[1],startPlatform,endPlatforms[1], texts[1],docks[0][1].cirX, 50));
-		app.levels.push( new app.Level(docks[2],startPlatform,endPlatforms[2],texts[2],docks[0][1].cirX, 50));
+
 		
 		app.activeLevel = app.levels[0];
 		app.levelNumber = 0;
@@ -272,11 +283,25 @@
 				app.drawText("LEVEL COMPLETE!", app.canvasWIDTH/2, app.canvasHEIGHT/2 - 50, 60, 'black');
 				app.drawText("PRESS SPACE TO CONTINUE!", app.canvasWIDTH/2, app.canvasHEIGHT/2 + 50, 60, 'black');
 				app.drawText("Your time was:" + app.activeLevel.timer.toFixed(2) , app.canvasWIDTH/2, app.canvasHEIGHT/2 + 110, 50, 'black');
+				if(app.activeLevel.timer < app.activeLevel.highScore){
+					app.drawText("New HighScore of:" + app.activeLevel.timer.toFixed(2) , app.canvasWIDTH/2, app.canvasHEIGHT/2 + 160, 50, 'black');
+				}
+				else{
+					app.drawText("The HighScore is:" + app.activeLevel.highScore.toFixed(2) , app.canvasWIDTH/2, app.canvasHEIGHT/2 + 160, 50, 'black');
+				}
+				
 				if(app.keydown[app.keyboard.space]){
+				
+					if(app.activeLevel.timer < app.activeLevel.highScore){
+						app.highScores[app.levelNumber] = app.activeLevel.timer;
+						localStorage.setItem( 'highScores', JSON.stringify(app.highScores) );
+					}
+					console.log(app.levels);
 					app.keydown[32] = false;
 					app.levelNumber++;
 					app.activeLevel = app.levels[app.levelNumber];
 					app.switchLevel = false;
+					console.log(app.levels);
 					app.activeLevel.reset();
 				}
 			}
@@ -297,9 +322,23 @@
 			app.activeLevel.docksUpdateAndDraw();
 			app.player.draw(app.ctx);
 			app.activeLevel.drawPlatforms();
+			if(app.activeLevel.timer < app.activeLevel.highScore){
+				app.drawText("New HighScore of:" + app.activeLevel.timer.toFixed(2) , app.canvasWIDTH/2, app.canvasHEIGHT/2 + 160, 50, 'black');
+			}
+			else{
+				app.drawText("The HighScore is:" + app.activeLevel.highScore.toFixed(2) , app.canvasWIDTH/2, app.canvasHEIGHT/2 + 160, 50, 'black');
+			}
+			
+
+			
 			app.drawText("GAME COMPLETE!", app.canvasWIDTH/2, app.canvasHEIGHT/2 - 50, 90, 'black');
 			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/2, app.canvasHEIGHT/2 + 50, 90, 'black');
+			app.drawText("Your time was:" + app.activeLevel.timer.toFixed(2) , app.canvasWIDTH/2, app.canvasHEIGHT/2 + 110, 50, 'black');
 			if(app.keydown[app.keyboard.space]){
+				if(app.activeLevel.timer < app.activeLevel.highScore){
+					app.highScores[app.levelNumber] = app.activeLevel.timer;
+					localStorage.setItem( 'highScores', JSON.stringify(app.highScores) );
+				}
 				app.gamestate = app.STATE_MENU;
 				app.keydown[32] = false;
 			}
@@ -307,7 +346,12 @@
 		else if (app.gamestate == app.STATE_LOST){
 			app.drawText("YOU FELL IN!", app.canvasWIDTH/2, app.canvasHEIGHT/2 - 50, 90, 'black');
 			app.drawText("PRESS SPACE TO RESTART!", app.canvasWIDTH/2, app.canvasHEIGHT/2 + 50, 90, 'black');
+				
 			if(app.keydown[app.keyboard.space]){
+				if(app.activeLevel.timer < app.activeLevel.highScore){
+					app.highScores[app.levelNumber] = app.activeLevel.timer;
+					localStorage.setItem( 'highScores', JSON.stringify(app.highScores) );
+				}
 				app.activeLevel.reset();
 				app.gamestate = app.STATE_PLAYING;
 				app.keydown[32] = false;

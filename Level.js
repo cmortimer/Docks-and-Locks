@@ -4,7 +4,7 @@ var app = app || {};
 
 app.Level = function(){
 
-	function Level(_docks,_start,_end, _text, _textX, _textY){
+	function Level(_docks,_start,_end, _text, _textX, _textY, _highScore){
 	
 		this.docks = _docks;
 		this.startPlatform = _start;
@@ -13,7 +13,7 @@ app.Level = function(){
 		this.textX = _textX || -1000 ;
 		this.textY = _textY || -1000;
 		this.timer = 0;
-		this.highScore;
+		this.highScore = _highScore || 99999;
 	}
 	
 	var p = Level.prototype;

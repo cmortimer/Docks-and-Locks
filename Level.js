@@ -110,13 +110,10 @@ app.Level = function(){
 			app.player.y = this.endPlatform.y - app.player.height;
 			app.player.gameState = app.player.STATE_RUNNING;
 			//Has the game been won?
-			console.log(app.player.gamestate);
 			if(app.levelNumber == app.levels.length - 1){
-				console.log("Won Game");
 				app.gamestate = app.STATE_WON;
 			}
 			else{
-				console.log("Next Level");
 				app.switchLevel = true;
 			}
 		}

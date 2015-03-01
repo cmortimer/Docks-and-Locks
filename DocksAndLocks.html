@@ -182,6 +182,9 @@
 			if(app.keydown[app.keyboard.up]){
 				app.player.jump();
 			}
+			else{
+				app.player.gameState = app.player.STATE_FALLING;
+			}
 			app.player.moveVertically(350, app.dt);
 			app.player.draw(app.ctx);
 			if(app.player.y > app.deathHeight && app.gamestate == app.STATE_PLAYING)	app.gamestate = app.STATE_LOST;

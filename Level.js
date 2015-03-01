@@ -52,7 +52,7 @@ app.Level = function(){
 			for(var i = this.docks.length -1; i>=0; i--){
 				
 				//check player collision
-				if(app.collides(app.player, this.docks[i].platform)){
+				if(app.collidesTop(app.player, this.docks[i].platform)){
 				
 					//adjust player height
 					app.player.y = this.docks[i].platform.y - app.player.height;
@@ -98,6 +98,11 @@ app.Level = function(){
 						}
 					}
 				}
+				
+				else if (app.collidesBot(app.player, this.docks[i].platform)){
+					app.player.y = this.docks[i].platform.y + this.docks[i].platform.height;
+					app.player.gameState = app.player.STATE_FALLING;
+				}
 				this.docks[i].draw(app.ctx,i + 1);
 			}
 		}
@@ -106,13 +111,18 @@ app.Level = function(){
 		
 		
 		//Player and start platform
-		if(app.collides(app.player, this.startPlatform)){
+		if(app.collidesTop(app.player, this.startPlatform)){
 			app.player.y = this.startPlatform.y - app.player.height;
 			app.player.gameState = app.player.STATE_RUNNING;
 		}
+		
+		else if(app.collidesBot(app.player, this.startPlatform)){
+			app.player.y = this.startPlatform.y + this.startPlatform.height;
+			app.player.gameState = app.player.STATE_FALLING;
+		}
 			
 		//Player and end platform
-		if(app.collides(app.player, this.endPlatform) ){
+		if(app.collidesTop(app.player, this.endPlatform) ){
 			app.playEffect("win.wav");
 			app.player.y = this.endPlatform.y - app.player.height;
 			app.player.gameState = app.player.STATE_RUNNING;
@@ -123,6 +133,11 @@ app.Level = function(){
 			else{
 				app.switchLevel = true;
 			}
+		}
+		
+		else if(app.collidesBot(app.player, this.endPlatform)){
+			app.player.y = this.endPlatform.y + this.endPlatform.height;
+			app.player.gameState = app.player.STATE_FALLING;
 		}
 	}
 	

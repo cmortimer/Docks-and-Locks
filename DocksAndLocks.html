@@ -182,7 +182,7 @@
 			if(app.keydown[app.keyboard.up]){
 				app.player.jump();
 			}
-			app.player.moveVertically(200, app.dt);
+			app.player.moveVertically(350, app.dt);
 			app.player.draw(app.ctx);
 			if(app.player.y > app.deathHeight && app.gamestate == app.STATE_PLAYING)	app.gamestate = app.STATE_LOST;
 		}
@@ -193,7 +193,7 @@
 		//Collisions
 		
 		//Check if two rectangles are colliding
-		app.collides = function(a, b){
+		app.collidesTop = function(a, b){
 			var ax = a.x + a.width/2;
 			var ay = a.y + a.height;
 			var bx = b.x;
@@ -203,6 +203,18 @@
 				   ax > bx &&
 				   ay < by + b.height &&
 				   ay > by;
+		}
+		
+		app.collidesBot = function(a, b){
+			var ax = a.x + a.width/2;
+			var ay = a.y;
+			var bx = b.x;
+			var by = b.y;
+			
+			return ax < bx + b.width &&
+				   ax > bx &&
+				   ay > by &&
+				   ay < by + b.height;
 		}
 		
 		app.playEffect = function(sound){

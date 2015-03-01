@@ -13,7 +13,7 @@ app.Player = function(){
 		this.gameState = 0;
 		this.x = _x;
 		this.y = _y;
-		this.jumpHeight = 175;
+		this.jumpHeight = 225;
 		this.maxHeight;
 		this.sourceX = 0;
 		this.sourceY = 0;
@@ -21,7 +21,8 @@ app.Player = function(){
 		this.sourceHeight = 0;
 		this.width = _w;
 		this.height = _h;
-		this.speed = 200;
+		this.speed = 225;
+		this.jumpSpeed = 400;
 		this.image;
 		this.drawLib;
 		
@@ -52,7 +53,7 @@ app.Player = function(){
 	
 	p.moveVertically = function(gravity, dt){
 		if(this.gameState == this.STATE_JUMPING){
-			this.y -= this.speed * dt;
+			this.y -= this.jumpSpeed * dt;
 			if(this.y <= this.maxHeight){
 				this.gameState = this.STATE_FALLING;
 			}

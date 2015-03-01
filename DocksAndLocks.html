@@ -98,6 +98,11 @@
 		app.canvas.height = app.canvasHEIGHT;
 		app.ctx = app.canvas.getContext('2d');
 		
+		//Gradient
+		app.water_gradient = app.ctx.createLinearGradient(0, 0, 0, 720);
+		app.water_gradient.addColorStop(0, "#6666E0");
+		app.water_gradient.addColorStop(0.8, "#333370");
+		
 		//Game Objects
 		var docks = [[],[],[]];
 		var texts = [];
@@ -271,7 +276,11 @@
 		
 		this.ctx.clearRect(0,0,app.canvasWIDTH,app.canvasHEIGHT);
 		
-		this.ctx.fillStyle = "#0000aa";
+		//this.ctx.fillStyle = "#0000aa";
+		if(app.gamestate == app.STATE_MENU)
+			this.ctx.fillStyle = "white";
+		else
+			this.ctx.fillStyle = app.water_gradient;
 		
 		this.ctx.fillRect(0,0,app.canvasWIDTH,app.canvasHEIGHT);
 		
@@ -321,22 +330,24 @@
 				}
 			}
 			else{
-				this.ctx.fillStyle = "#001155";
+				this.ctx.fillStyle = "#D6AD33";
 				this.ctx.fillRect(0, app.deathHeight, app.canvasWIDTH, app.canvasHEIGHT/2);
+				this.ctx.fillStyle = "#666";
+				this.ctx.fillRect(0, app.deathHeight + 20, app.canvasWIDTH, 20);
 				app.activeLevel.docksUpdateAndDraw();
 				app.activeLevel.updateTimer(app.dt);
 				app.activeLevel.checkForCollisions();
 				app.player.update();
-				app.activeLevel.drawPlatforms();
+				app.activeLevel.drawPlatforms(app.ctx);
 			}
 			app.dt = app.calculateDeltaTime();
 		}
 		else if (app.gamestate == app.STATE_WON){
-			this.ctx.fillStyle = "#001155";
+			this.ctx.fillStyle = "#D1AC19";
 			this.ctx.fillRect(0, app.deathHeight, app.canvasWIDTH, app.canvasHEIGHT/2);
 			app.activeLevel.docksUpdateAndDraw();
 			app.player.draw(app.ctx);
-			app.activeLevel.drawPlatforms();
+			app.activeLevel.drawPlatforms(app.ctx);
 			if(app.activeLevel.timer < app.activeLevel.highScore){
 				app.drawText("New HighScore of:" + app.activeLevel.timer.toFixed(2) , app.canvasWIDTH/2, app.canvasHEIGHT/2 + 160, 50, 'black');
 			}

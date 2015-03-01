@@ -14,6 +14,8 @@ app.Level = function(){
 		this.textY = _textY || -1000;
 		this.timer = 0;
 		this.highScore = _highScore || 99999;
+		this.endFlag = new Image();
+		this.endFlag.src = "media/endflag.png";
 	}
 	
 	var p = Level.prototype;
@@ -26,9 +28,10 @@ app.Level = function(){
 	}
 
 	
-	p.drawPlatforms = function(){
+	p.drawPlatforms = function(ctx){
 			this.startPlatform.draw(app.ctx);
 			this.endPlatform.draw(app.ctx);
+			ctx.drawImage(this.endFlag, this.endPlatform.x + 20, this.endPlatform.y - 60, 40, 60); 
 			this.drawText(app.ctx);
 	}
 	

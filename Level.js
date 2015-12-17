@@ -55,10 +55,11 @@ app.Level = function(){
 			for(var i = this.docks.length -1; i>=0; i--){
 				
 				//check player collision
-				if(app.collidesTop(app.player, this.docks[i].platform)){
+			    if (app.collidesTop(app.player, this.docks[i].platform)) {
+
+			        app.player.isOnPlatform = true;
 				
-					//adjust player height
-					app.player.y = this.docks[i].platform.y - app.player.height;
+					
 					
 					//player is no longer falling
 					app.player.gameState = app.player.STATE_RUNNING;
@@ -100,6 +101,8 @@ app.Level = function(){
 							}
 						}
 					}
+			        //adjust player height
+					app.player.y = this.docks[i].platform.y - app.player.height + 1;
 				}
 				
 				else if (app.collidesBot(app.player, this.docks[i].platform)){
@@ -115,18 +118,20 @@ app.Level = function(){
 		
 		//Player and start platform
 		if(app.collidesTop(app.player, this.startPlatform)){
-			app.player.y = this.startPlatform.y - app.player.height;
+			app.player.y = this.startPlatform.y - app.player.height +1;
 			app.player.gameState = app.player.STATE_RUNNING;
+			app.player.isOnPlatform = true;
 		}
 		
 		else if(app.collidesBot(app.player, this.startPlatform)){
-			app.player.y = this.startPlatform.y + this.startPlatform.height;
+			app.player.y = this.startPlatform.y + this.startPlatform.height +1;
 			app.player.gameState = app.player.STATE_FALLING;
 		}
 			
 		//Player and end platform
 		if(app.collidesTop(app.player, this.endPlatform) ){
-			app.playEffect("win.wav");
+		    app.playEffect("win.wav");
+		    app.player.isOnPlatform = true;
 			app.player.y = this.endPlatform.y - app.player.height;
 			app.player.gameState = app.player.STATE_RUNNING;
 			//Has the game been won?

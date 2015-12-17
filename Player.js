@@ -25,6 +25,8 @@ app.Player = function(){
 		this.jumpSpeed = 400;
 		this.image;
 		this.drawLib;
+
+		this.isOnPlatform = false;
 		
 		//States
 		this.STATE_RUNNING = 0;
@@ -59,7 +61,10 @@ app.Player = function(){
 			}
 		}
 		else
-			this.y += gravity * dt;
+		    if (!this.isOnPlatform) {
+		        this.y += gravity * dt;
+		    }
+		this.isOnPlatform = false;
 	}
 	
 	//Currently just draws a rectangle

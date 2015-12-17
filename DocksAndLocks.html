@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -190,7 +190,7 @@
 			else{
 				app.player.gameState = app.player.STATE_FALLING;
 			}
-			app.player.moveVertically(350, app.dt);
+			app.player.moveVertically(200, app.dt);
 			app.player.draw(app.ctx);
 			if(app.player.y > app.deathHeight && app.gamestate == app.STATE_PLAYING)	app.gamestate = app.STATE_LOST;
 		}
@@ -274,6 +274,7 @@
 	
 	app.update =  function(){	
 		
+	    app.dt = app.calculateDeltaTime();
 		this.ctx.clearRect(0,0,app.canvasWIDTH,app.canvasHEIGHT);
 		
 		//this.ctx.fillStyle = "#0000aa";
@@ -329,18 +330,19 @@
 					app.activeLevel.reset();
 				}
 			}
+			    //playing state
 			else{
 				this.ctx.fillStyle = "#D6AD33";
 				this.ctx.fillRect(0, app.deathHeight, app.canvasWIDTH, app.canvasHEIGHT/2);
 				this.ctx.fillStyle = "#666";
 				this.ctx.fillRect(0, app.deathHeight + 20, app.canvasWIDTH, 20);
 				app.activeLevel.docksUpdateAndDraw();
+				app.player.update();
 				app.activeLevel.updateTimer(app.dt);
 				app.activeLevel.checkForCollisions();
-				app.player.update();
 				app.activeLevel.drawPlatforms(app.ctx);
 			}
-			app.dt = app.calculateDeltaTime();
+			
 		}
 		else if (app.gamestate == app.STATE_WON){
 			this.ctx.fillStyle = "#D1AC19";
